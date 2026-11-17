@@ -8,10 +8,11 @@
 
 ## 代码职责
 
-- `privacywarehouse/subjects.py`：来源别名与匿名身份映射。
-- `privacywarehouse/landing.py`：原始接收和身份规范化。
-- `privacywarehouse/warehouse.py`：列式明细、组织聚合和个人导出。
+- `privacywarehouse/subjects.py`：来源别名与匿名身份映射，注册时执行抑制登记拦截。
+- `privacywarehouse/landing.py`：原始接收和身份规范化，含撤回标识的批次整体拒绝。
+- `privacywarehouse/warehouse.py`：列式明细、组织聚合和个人导出，发布与读取均过滤受抑制标识。
 - `privacywarehouse/storage.py`：本地事务、内容摘要和查询工具。
+- `privacywarehouse/erasure.py`：贯穿 catalog/landing/facts/versions/exports 的授权撤回擦除、续跑、别名扩展与检查点恢复对账。
 
 ## 安装与运行
 

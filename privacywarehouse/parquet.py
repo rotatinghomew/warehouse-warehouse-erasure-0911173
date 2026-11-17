@@ -36,6 +36,28 @@ def write_rows(root, rows):
     return str(destination.resolve())
 
 
+def replace_rows(path, rows):
+    path = Path(path)
+    rows = list(rows)
+    if not rows:
+        raise ValueError("空结果不应保留Parquet路径，应由调用方删除文件")
+    temporary = path.with_suffix(".pending")
+    database = duckdb.connect(config={"threads": 1})
+    try:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", encoding="utf-8") as source:
+            json.dump(rows, source, ensure_ascii=False)
+            source.flush()
+            database.execute("CREATE TABLE payload AS SELECT * FROM read_json_auto("
+                             + literal(source.name) + ", format='array')")
+            database.execute("COPY payload TO " + literal(temporary) + " (FORMAT PARQUET)")
+        os.replace(temporary, path)
+    finally:
+        database.close()
+        if temporary.exists():
+            temporary.unlink()
+    return str(path.resolve())
+
+
 def query(paths, sql="SELECT * FROM payload", parameters=()):
     paths = list(paths)
     if not paths:
