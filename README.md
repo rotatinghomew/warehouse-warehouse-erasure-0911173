@@ -15,10 +15,11 @@
 
 ## 安装与运行
 
-使用 Python 3.11。先执行 `python3 -m pip install -r requirements.txt`；依赖仅在准备环境时安装，运行与测试均可断网。
+使用 Python 3.11（兼容该系列补丁版本，独立容器镜像以 SHA256 摘要固定）。构建工具和运行依赖均按精确版本登记。先执行 `python3 -m pip install -r requirements-build.txt -r requirements.txt`；依赖仅在准备环境时安装，运行与测试均可断网。
 
 ```sh
 python3 -m compileall -q privacywarehouse tests
+python3 -m build --wheel --no-isolation
 python3 -m unittest discover -s tests -v
 python3 -m privacywarehouse
 ```
